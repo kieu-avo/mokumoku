@@ -19,6 +19,9 @@ class User < ApplicationRecord
   validates :password_confirmation, presence: true, if: -> { new_record? || changes[:crypted_password] }
 
   validates :email, uniqueness: true
+  validates :gender, presence: true
+
+  enum gender: { other: 0, man: 1, woman: 2 }
 
   scope :allowing_created_event_notification,
         -> { joins(:notification_timings).merge(NotificationTiming.created_event) }
@@ -31,6 +34,10 @@ class User < ApplicationRecord
 
   def owner?(event)
     event.user_id == id
+  end
+
+  def female?
+    gender == 'woman'
   end
 
   def attend(event)
